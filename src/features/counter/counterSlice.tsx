@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
 
 type listItem = {
     content: string;
@@ -10,13 +11,13 @@ type CounterState = {
     list: listItem[];
 }
 
-const initState: CounterState = {
-    list: []
+const initialState: CounterState = {
+    list: JSON.parse(localStorage.getItem("list_item") || "[]") || [],
 }
 
 export const counterSlice = createSlice({
   name: "cart",
-  initialState: initState,
+  initialState,
   reducers: {
     addItem: (state, action) => {
       state.list.push(action.payload)
@@ -36,6 +37,6 @@ export const {
   updateContent,
 } = counterSlice.actions;
 
-export const getListItems = (state: CounterState) => state.list;
+export const getListItems = (state: RootState) => state.list;
 
 export default counterSlice.reducer;
