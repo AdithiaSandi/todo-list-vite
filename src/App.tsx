@@ -49,7 +49,7 @@ function App() {
                     }}>
                     <input id="content-value" type="text" className={cn("bg-[#262e4c]",{
                       "line-through": item.done
-                    })} defaultValue={item.content} />
+                    })} defaultValue={item.content} disabled={item.done} />
                     <div className="flex">
                       <img src="https://www.svgrepo.com/show/449945/trash.svg" alt="" height={25} width={25} className="cursor-pointer" onClick={() => handleDelete(index)} />
                       <div className="flex flex-col">
