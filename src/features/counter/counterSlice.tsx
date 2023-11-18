@@ -1,14 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 type listItem = {
     content: string;
     done: boolean;
+    id: number
 
 }
 
-type CounterState = {
+export type CounterState = {
     list: listItem[];
+}
+
+type dataPayload = {
+  index: number;
+  data: listItem
+  id?: number;
+}
+
+type dataPayloadMove = {
+  id: number;
+  direction: string;
 }
 
 const initialState: CounterState = {
@@ -16,18 +28,39 @@ const initialState: CounterState = {
 }
 
 export const counterSlice = createSlice({
-  name: "cart",
-  initialState,
+  name: "list",
+  initialState: initialState,
   reducers: {
-    addItem: (state, action) => {
-      state.list.push(action.payload)
+    addItem: (state, action: PayloadAction<Partial<dataPayload>>) => {
+      action.payload.data && state.list.push(action.payload.data);
     },
-    removeItem: (state, action) => {
-      state.list.splice(action.payload, 1);
+    removeItem: (state, action: PayloadAction<number>) => {
+      state.list = [...state.list.slice(0, action.payload), ...state.list.slice(action.payload + 1)];
+      // state.list = state.list.filter((_,index) => index !== action.payload);
     },
-    updateContent: (state,action) => {
-        state.list[action.payload.index] = action.payload.content
-    }
+    updateContent: (state,action: PayloadAction<dataPayload>) => {
+      state.list[action.payload.index].content = action.payload.data.content;
+    },
+    toggleStatus: (state,action: PayloadAction<number>) => {
+      state.list[action.payload].done = !state.list[action.payload].done;
+    },
+    moveItem: (state,action: PayloadAction<dataPayloadMove>) => {
+      const index = state.list.findIndex((item) => item.id === action.payload.id)
+      switch (action.payload.direction) {
+        case "up": 
+          if (index === 0) {
+            const first = state.list.shift()
+            first !== undefined && state.list.push(first)
+          } else [state.list[index-1],state.list[index]] = [state.list[index],state.list[index-1]]
+          break;
+        case "down":
+          if (index === state.list.length - 1) {
+            const last = state.list.pop()
+            last !== undefined && state.list.unshift(last)
+          } else [state.list[index],state.list[index+1]] = [state.list[index+1],state.list[index]]
+          break;
+      }
+    } 
   },
 });
 
@@ -35,6 +68,8 @@ export const {
   addItem,
   removeItem,
   updateContent,
+  toggleStatus,
+  moveItem
 } = counterSlice.actions;
 
 export const getListItems = (state: RootState) => state.list;

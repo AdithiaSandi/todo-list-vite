@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+
+input {
+  color: #9b99a5;
+  opacity: 1;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #9b99a5;
+  opacity: 1; /* Firefox */
+}
